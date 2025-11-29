@@ -8,18 +8,17 @@ const protect = async (req, res, next) => {
     return res.status(401).json({ success: false, message: 'No token, authorization denied' });
   }
 
-  token = token.split(' ')[1]; // Extract token from 'Bearer <token>'
+  token = token.split(' ')[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded.id; // Attach user info to the request object
+    req.user = decoded.id;
     next();
   } catch (err) {
     res.status(401).json({ success: false, message: 'Token is not valid' });
   }
 };
 
-// Protect routes with role-based access
 const admin = (req, res, next) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({ success: false, message: 'Access denied, admin only' });
